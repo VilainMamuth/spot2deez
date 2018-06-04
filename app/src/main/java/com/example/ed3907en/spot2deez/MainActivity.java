@@ -13,6 +13,12 @@ import android.widget.TextView;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
+import java.io.IOException;
+import java.util.Base64;
+
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -20,12 +26,14 @@ import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
-
+    private final static String TAG = MainActivity.class.getSimpleName();
     private Uri url;
 
     SpotifyService srv;
     Retrofit retrofit;
+    Retrofit retrofit2;
 
+    private static final String CLIENT_ID = "d865062283bf4b128e7e17540f20dd20";
     private String token;
 
     @Override
@@ -40,13 +48,12 @@ public class MainActivity extends AppCompatActivity {
         TextView source = (TextView) findViewById(R.id.sourceLocation);
     source.setText(url.toString());
 
-         retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.spotify.com/v1/")
+
+
+        retrofit2 = new Retrofit.Builder()
+                .baseUrl("https://accounts.spotify.com/")
                 .addConverterFactory(MoshiConverterFactory.create())
                 .build();
-
-
-
         //Log.d("toto",tr.toString());
 
     }
@@ -55,8 +62,53 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        if(token == null){
+            String key = "ZDg2NTA2MjI4M2JmNGIxMjhlN2UxNzU0MGYyMGRkMjA6NzA3NGZiNmNlZWUwNGZmMjk4MjMzNjZkY2MwM2U5NDg=";
+            SpotifyAccountService sarv = retrofit2.create(SpotifyAccountService.class);
+            Call<Token> calltoken = sarv.getToken("Basic " + key, "client_credentials");
+
+            calltoken.enqueue(new Callback<Token>() {
+                @Override
+                public void onResponse(Call<Token> call, Response<Token> response) {
+                    Log.d("toto"," ok " + response.toString());
+                    token = response.body().access_token;
+                    Log.d(TAG, "youpi "+ token);
+
+                    grab();
+
+                }
+
+                @Override
+                public void onFailure(Call<Token> call, Throwable t) {
+                    Log.d("toto"," requete foirée");
+                }
+            });
+
+        } else{
+            grab();
+        }
 
 
+
+
+    }
+
+    private void grab(){
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public okhttp3.Response intercept(Chain chain) throws IOException {
+                        Request newrequest = chain.request().newBuilder().addHeader("Authorization","Bearer "+token).build();
+                        return chain.proceed(newrequest);
+                    }
+                })
+                .build();
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl("https://api.spotify.com/v1/")
+                .addConverterFactory(MoshiConverterFactory.create())
+                .client( client)
+                .build();
         SpotifyService srv = retrofit.create(SpotifyService.class);
 
         Call<Track> call = srv.getTrack("1v6wfh5bUCnOttxRUpNST2");
@@ -73,8 +125,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-
     }
+
 
 }

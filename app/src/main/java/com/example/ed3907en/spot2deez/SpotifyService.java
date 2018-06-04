@@ -13,7 +13,7 @@ public interface SpotifyService {
      * @return Requested track information
      * @see <a href="https://developer.spotify.com/web-api/get-track/">Get a Track</a>
      */
-    @GET("/tracks/{id}")
+    @GET("tracks/{id}")
     Call<Track> getTrack(@Path("id") String trackId);
 
 }
