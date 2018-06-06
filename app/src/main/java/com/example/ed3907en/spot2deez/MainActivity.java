@@ -1,6 +1,7 @@
 package com.example.ed3907en.spot2deez;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -18,6 +19,7 @@ import com.squareup.moshi.Moshi;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -37,7 +39,6 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
     Retrofit retrofit2;
 
     private static final String CLIENT_ID = "d865062283bf4b128e7e17540f20dd20";
-    private String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +66,15 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
     protected void onResume() {
         super.onResume();
 
-        if(token == null){
+        String token = TokenPersister.getToken(this);
+
+        if (token == null){
+            //get a new token
+        }else{
+            grab();
+        }
+        final Context app = this;
+        if( token == null){
             String key = "ZDg2NTA2MjI4M2JmNGIxMjhlN2UxNzU0MGYyMGRkMjA6NzA3NGZiNmNlZWUwNGZmMjk4MjMzNjZkY2MwM2U5NDg=";
             SpotifyAccountService sarv = retrofit2.create(SpotifyAccountService.class);
             Call<Token> calltoken = sarv.getToken("Basic " + key, "client_credentials");
@@ -74,8 +83,9 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
                 @Override
                 public void onResponse(Call<Token> call, Response<Token> response) {
                     Log.d("toto"," ok " + response.toString());
-                    token = response.body().access_token;
-                    Log.d(TAG, "youpi "+ token);
+                    Log.d(TAG, "youpi "+ response.body().access_token);
+
+                    TokenPersister.setToken(app, response.body().access_token,response.body().expries_in, TimeUnit.SECONDS );
 
                     grab();
 
@@ -96,16 +106,27 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
 
     }
 
-    private void grab(){
+    private OkHttpClient clientWithInterceptor(String token){
+        Interceptor i = new Interceptor() {
+            @Override
+            public okhttp3.Response intercept(Chain chain) throws IOException {
+                return null;
+            }
+        };
         OkHttpClient client = new OkHttpClient.Builder()
                 .addInterceptor(new Interceptor() {
                     @Override
                     public okhttp3.Response intercept(Chain chain) throws IOException {
-                        Request newrequest = chain.request().newBuilder().addHeader("Authorization","Bearer "+token).build();
+                        Request newrequest = chain.request().newBuilder().addHeader("Authorization","Bearer "+ token).build();
                         return chain.proceed(newrequest);
                     }
                 })
                 .build();
+        return client;
+    }
+
+    private void grab(){
+         String token = TokenPersister.getToken(this);
 
         retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.spotify.com/v1/")
