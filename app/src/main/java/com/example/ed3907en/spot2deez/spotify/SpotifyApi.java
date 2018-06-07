@@ -54,7 +54,7 @@ public class SpotifyApi extends ProviderApi {
                 .build();
         SpotifyService srv = retrofit.create(SpotifyService.class);
 
-        accessToken = TokenPersister.getToken();
+        accessToken = TokenPersister.getToken( );
 
     }
 
