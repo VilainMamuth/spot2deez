@@ -1,4 +1,6 @@
-package com.example.ed3907en.spot2deez;
+package com.example.ed3907en.spot2deez.spotify;
+
+import com.example.ed3907en.spot2deez.Track;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

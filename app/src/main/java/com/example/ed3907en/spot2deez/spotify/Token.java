@@ -1,4 +1,4 @@
-package com.example.ed3907en.spot2deez;
+package com.example.ed3907en.spot2deez.spotify;
 
 public class Token {
 
