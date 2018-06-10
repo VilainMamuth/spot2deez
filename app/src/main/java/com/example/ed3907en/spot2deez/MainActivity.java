@@ -9,7 +9,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.ed3907en.spot2deez.spotify.SpotifyAccountService;
 import com.example.ed3907en.spot2deez.spotify.SpotifyApi;
 import com.example.ed3907en.spot2deez.spotify.Token;
 import com.example.ed3907en.spot2deez.spotify.TokenPersister;
@@ -42,12 +44,25 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
 
 
         sourceApi = new SpotifyApi();
+        //si on a un token valide en cache , alors on en demande pas un nouveau
+        Token spotifyAccessToken = TokenPersister.getToken(this);
+        if (spotifyAccessToken != null){
+            ((SpotifyApi)sourceApi).setAccessToken(spotifyAccessToken);
+        }
 
+        Log.d(TAG, "onCreate: "+((SpotifyApi) sourceApi).getAccessToken());
+        Track tr = null;
+        try {
+            tr = sourceApi.getTrack("1v6wfh5bUCnOttxRUpNST2");
+        } catch (Exception e) {
+            Toast.makeText(this, "Pb pour récupérer les infos de cette track", Toast.LENGTH_SHORT).show();
+        }
+        //Track tr = null;
+        //        //Log.d("toto",tr.toString());
+        if (tr != null){
+            updateActivity(tr);
+        }
 
-        Track tr = sourceApi.getTrack("1v6wfh5bUCnOttxRUpNST2");
-        //Log.d("toto",tr.toString());
-
-        updateActivity(tr);
     }
 
     @Override
