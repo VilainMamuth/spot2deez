@@ -52,17 +52,21 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
 
         Log.d(TAG, "onCreate: "+((SpotifyApi) sourceApi).getAccessToken());
         Track tr = null;
+            this.getTrack(sourceApi,"1v6wfh5bUCnOttxRUpNST2");
+
+
+            TokenPersister.setToken(this,((SpotifyApi) sourceApi).getAccessToken());
+    }
+
+
+    private void getTrack(ProviderApi from, String trackId){
         try {
-            tr = sourceApi.getTrack("1v6wfh5bUCnOttxRUpNST2");
+            Track tr = from.getTrack(trackId).blockingGet();
+            updateActivity(tr);
         } catch (Exception e) {
             Toast.makeText(this, "Pb pour récupérer les infos de cette track", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
-        //Track tr = null;
-        //        //Log.d("toto",tr.toString());
-        if (tr != null){
-            updateActivity(tr);
-        }
-
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.example.ed3907en.spot2deez.spotify;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.format.Time;
 import android.util.Log;
 
 import java.util.concurrent.TimeUnit;
@@ -13,16 +14,16 @@ public class TokenPersister {
     private static final String ACCESS_TOKEN = "access_token";
     private static final String EXPIRES_AT = "expires_at";
 
-    public static void setToken(Context c , String token, long expiresIn, TimeUnit unit ){
+    public static void setToken(Context c , Token token){
         Context app = c.getApplicationContext();
 
         long now = System.currentTimeMillis();
-        long expiresAt = now + unit.toMillis(expiresIn);
+        long expiresAt = now + TimeUnit.SECONDS.toMillis(token.getExpries_in());
 
         SharedPreferences prefs = app.getSharedPreferences("prefs",Context.MODE_PRIVATE);
 
         prefs.edit()
-                .putString(ACCESS_TOKEN,token)
+                .putString(ACCESS_TOKEN, token.getAccess_token())
                 .putLong(EXPIRES_AT, expiresAt)
         .apply();
 

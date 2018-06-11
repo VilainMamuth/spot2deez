@@ -1,6 +1,9 @@
 package com.example.ed3907en.spot2deez;
 
+import io.reactivex.Observable;
+import io.reactivex.Single;
+
 public abstract class ProviderApi {
 
-    public abstract Track getTrack(String trackId) throws Exception;
+    public abstract Single<Track> getTrack(String trackId) throws Exception;
 }

@@ -6,6 +6,12 @@ public class Token {
     public String token_type;
     public int expries_in;
 
+    private long expiresAt;
+
+    public boolean isValid(){
+        return System.currentTimeMillis() < expiresAt;
+    }
+
     public String getAccess_token() {
         return access_token;
     }
