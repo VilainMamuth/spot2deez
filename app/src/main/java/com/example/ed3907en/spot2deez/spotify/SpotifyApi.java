@@ -6,11 +6,13 @@ import com.example.ed3907en.spot2deez.ProviderApi;
 import com.example.ed3907en.spot2deez.Track;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -79,10 +81,12 @@ public class SpotifyApi extends ProviderApi {
     }
 
     private Single<Token> getValidAccessToken(){
-        Log.d(TAG, "getValidAccessToken: ");
-        if (accessToken == null || (accessToken!=null && !!accessToken.isValid()) ){
+        Log.d(TAG, "getValidAccessToken: " + accessToken);
+        if (accessToken == null || (accessToken!=null && !accessToken.isValid()) ){
+            Log.d(TAG, "getValidAccessToken: Token non valide, get a new");
             return newAccessToken();
         } else {
+            Log.d(TAG, "getValidAccessToken: token valide");
             return Single.just(accessToken);
         }
     }
@@ -91,7 +95,9 @@ public class SpotifyApi extends ProviderApi {
     public Single<Track> getTrack(String trackId) {
         Log.d(TAG, "getTrack: ");
 
-        return getValidAccessToken().flatMap(token -> { return service.getTrack(trackId);});
+        return getValidAccessToken()
+                .observeOn(Schedulers.io())
+                .flatMap(token -> { return service.getTrack(trackId);});
     }
 
     private Single<Token> newAccessToken(){
@@ -100,7 +106,19 @@ public class SpotifyApi extends ProviderApi {
 
         return sas.getToken("Basic " + key, "client_credentials")
                 .subscribeOn(Schedulers.io())
-                .doOnSuccess(this::setAccessToken);
+                .doOnSuccess(new Consumer<Token>() {
+                    @Override
+                    public void accept(Token token) throws Exception {
+
+                        long now = System.currentTimeMillis();
+                        long expiresAt = now + TimeUnit.SECONDS.toMillis(token.getExpries_in());
+                        Log.d(TAG, "newAccessToken: " + now + " : " + expiresAt);
+
+                        token.setExpiresAt(expiresAt);
+                        setAccessToken(token);
+                    }
+                }
+        );
 
     }
 
@@ -109,6 +127,7 @@ public class SpotifyApi extends ProviderApi {
     }
 
     public void setAccessToken(Token accessToken) {
+        Log.d(TAG, "setAccessToken: " + accessToken);
         this.accessToken = accessToken;
     }
 }

@@ -16,6 +16,7 @@ import com.example.ed3907en.spot2deez.spotify.SpotifyApi;
 import com.example.ed3907en.spot2deez.spotify.Token;
 import com.example.ed3907en.spot2deez.spotify.TokenPersister;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
@@ -26,9 +27,16 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
     private final static String TAG = MainActivity.class.getSimpleName();
     private Uri url;
 
+    private String sourceProviderName;
+    private String sourceProviderType;
+    private String sourceProviderId;
     private ProviderApi sourceApi;
 
     private static final String CLIENT_ID = "d865062283bf4b128e7e17540f20dd20";
+
+    private final static String PROVIDER_SPOTIFY = "spotify";
+    private final static String TYPE_TRACK = "track";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,26 +48,38 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
         url = i.getData();
 
         TextView source = (TextView) findViewById(R.id.sourceLocation);
-    //source.setText(url.toString());
+
+        Log.d(TAG, "onCreate: url source " + url.toString());
+
+        parseUrl(url);
 
 
-        sourceApi = new SpotifyApi();
-        //si on a un token valide en cache , alors on en demande pas un nouveau
-        Token spotifyAccessToken = TokenPersister.getToken(this);
-        if (spotifyAccessToken != null){
-            ((SpotifyApi)sourceApi).setAccessToken(spotifyAccessToken);
+        switch (sourceProviderName){
+            case PROVIDER_SPOTIFY:
+                sourceApi = new SpotifyApi();
+                break;
         }
 
-        Log.d(TAG, "onCreate: "+((SpotifyApi) sourceApi).getAccessToken());
-        Track tr = null;
-            this.getTrack(sourceApi,"1v6wfh5bUCnOttxRUpNST2");
+        //si on a un token valide en cache , alors on en demande pas un nouveau
+        Token spotifyAccessToken = TokenPersister.getToken(this);
+        if (spotifyAccessToken != null) {
+            ((SpotifyApi) sourceApi).setAccessToken(spotifyAccessToken);
+        }
+
+        switch (sourceProviderType){
+            case TYPE_TRACK:
+                this.getTrack(sourceApi, sourceProviderId);
+                break;
+        }
 
 
-            TokenPersister.setToken(this,((SpotifyApi) sourceApi).getAccessToken());
+
+        TokenPersister.setToken(this, ((SpotifyApi) sourceApi).getAccessToken());
+
     }
 
 
-    private void getTrack(ProviderApi from, String trackId){
+    private void getTrack(ProviderApi from, String trackId) {
         try {
             Track tr = from.getTrack(trackId).blockingGet();
             updateActivity(tr);
@@ -74,11 +94,11 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
         super.onResume();
     }
 
-    private void updateActivity(Track track){
+    private void updateActivity(Track track) {
         new LoadImageTask(this).execute(track.album.images.get(0).url);
         ((TextView) findViewById(R.id.namevalue)).setText(track.name);
         ((TextView) findViewById(R.id.artistvalue)).setText(track.artists.get(0).name);
-      //  ((WebView) findViewById(R.id.cover)).loadUrl(track.album.images.get(0).url);
+        //  ((WebView) findViewById(R.id.cover)).loadUrl(track.album.images.get(0).url);
 
     }
 
@@ -86,4 +106,42 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
     public void onImageLoaded(Bitmap bitmap) {
         ((ImageView) findViewById(R.id.cover)).setImageBitmap(bitmap);
     }
+
+    /**
+     * Basic parsing, need refactoring
+     * @param uri
+     */
+    private void parseUrl(Uri uri){
+        switch(uri.getScheme()){
+            case "spotify" :
+                sourceProviderName = PROVIDER_SPOTIFY;
+                break; // optional
+
+            case "http" :
+            case "https" :
+
+                switch (uri.getHost()){
+                    case "www.spotify.com":
+                    case "open.spotify.com":
+                        sourceProviderName = PROVIDER_SPOTIFY;
+                        break;
+                }
+
+                break; // optional
+
+            // You can have any number of case statements.
+            default : //
+                Toast.makeText(this, "Url non conforme", Toast.LENGTH_SHORT).show();
+        }
+
+        switch (sourceProviderName){
+            case PROVIDER_SPOTIFY:
+                sourceProviderType = uri.getPathSegments().get(0);
+                sourceProviderId = uri.getLastPathSegment();
+                break;
+        }
+
+
+    }
+
 }

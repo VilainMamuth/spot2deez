@@ -17,14 +17,11 @@ public class TokenPersister {
     public static void setToken(Context c , Token token){
         Context app = c.getApplicationContext();
 
-        long now = System.currentTimeMillis();
-        long expiresAt = now + TimeUnit.SECONDS.toMillis(token.getExpries_in());
-
         SharedPreferences prefs = app.getSharedPreferences("prefs",Context.MODE_PRIVATE);
 
         prefs.edit()
                 .putString(ACCESS_TOKEN, token.getAccess_token())
-                .putLong(EXPIRES_AT, expiresAt)
+                .putLong(EXPIRES_AT, token.getExpiresAt())
         .apply();
 
         Log.d(TAG, "Set token to " + token);
@@ -36,17 +33,20 @@ public class TokenPersister {
         SharedPreferences sharedPref = app.getSharedPreferences("prefs",Context.MODE_PRIVATE);
         Token token = null;
         String tokenString = sharedPref.getString(ACCESS_TOKEN, null);
-        long expiresAt = sharedPref.getLong(EXPIRES_AT, 0L);
+        long expiresAt = sharedPref.getLong(EXPIRES_AT, 0);
 
-        Log.d(TAG, "Inside prefs " + tokenString + " " + expiresAt + " : " + System.currentTimeMillis());
+
+        Log.d(TAG, "getToken: Inside prefs " + tokenString + " " + expiresAt + " : " + System.currentTimeMillis());
 
         if (tokenString == null || expiresAt < System.currentTimeMillis()) {
-            Log.d(TAG, "Token null ou expiré ");
+            Log.d(TAG, "getToken: Token null ou expiré ");
 
             return null;
         }else{
+            Log.d(TAG, "getToken: Token Valide");
             token = new Token();
             token.setAccess_token(tokenString);
+            token.setExpiresAt(expiresAt);
             // a priori seul l'access token est utile , pas besoin de mettre le reste
         }
 
