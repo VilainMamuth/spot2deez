@@ -6,7 +6,10 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.ToolbarWidgetWrapper;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,6 +18,9 @@ import com.example.ed3907en.spot2deez.spotify.SpotifyAccountService;
 import com.example.ed3907en.spot2deez.spotify.SpotifyApi;
 import com.example.ed3907en.spot2deez.spotify.Token;
 import com.example.ed3907en.spot2deez.spotify.TokenPersister;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -23,7 +29,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements LoadImageTask.Listener {
+public class MainActivity extends AppCompatActivity implements LoadImageTask.Listener  {
     private final static String TAG = MainActivity.class.getSimpleName();
     private Uri url;
 
@@ -32,22 +38,30 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
     private String sourceProviderId;
     private ProviderApi sourceApi;
 
-    private static final String CLIENT_ID = "d865062283bf4b128e7e17540f20dd20";
+    private TextView artistName;
+    /** Le nom peut être le titre d'une piste ou le nom d'un album */
+    private TextView name;
 
     private final static String PROVIDER_SPOTIFY = "spotify";
     private final static String TYPE_TRACK = "track";
+
+    private AdView mAdView;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        myToolbar.setNavigationIcon(R.drawable.ic_logo);
+        setSupportActionBar(myToolbar);
 
         Intent i = getIntent();
 
         url = i.getData();
 
-        TextView source = (TextView) findViewById(R.id.sourceLocation);
+        artistName = (TextView) findViewById(R.id.artistvalue);
+        name = (TextView) findViewById(R.id.namevalue);
 
         Log.d(TAG, "onCreate: url source " + url.toString());
 
@@ -76,6 +90,12 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
 
         TokenPersister.setToken(this, ((SpotifyApi) sourceApi).getAccessToken());
 
+        MobileAds.initialize(this, "ca-app-pub-1432851353322917~2955296637");
+        mAdView = findViewById(R.id.lapub);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
+
     }
 
 
@@ -96,8 +116,8 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
 
     private void updateActivity(Track track) {
         new LoadImageTask(this).execute(track.album.images.get(0).url);
-        ((TextView) findViewById(R.id.namevalue)).setText(track.name);
-        ((TextView) findViewById(R.id.artistvalue)).setText(track.artists.get(0).name);
+        name.setText(track.name);
+        artistName.setText(track.artists.get(0).name);
         //  ((WebView) findViewById(R.id.cover)).loadUrl(track.album.images.get(0).url);
 
     }
@@ -144,4 +164,13 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
 
     }
 
+    public void openApp(View view){
+        Log.d(TAG, "openApp: " + view.toString());
+
+        Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("deezer://www.deezer.com/search/" + artistName.getText() + " " + name.getText()) );
+
+        startActivity(i);
+        this.finish();
+
+    }
 }
