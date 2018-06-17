@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CrossMoD</string>
+    <string name="open_in_deezer">Ouvrir avec Deezer</string>
+    <string name="cover_description">cover_description</string>
+    <string name="open_in_spotify">Ouvrir avec Spotify</string>
+    <string name="app_not_installed">Cette application n\'est pas installée</string>
+</resources>

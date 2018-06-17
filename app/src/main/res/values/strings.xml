@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">Spot2Deez</string>
-
-    <string name="title_activity_logo">LogoActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="app_name">CrossMoD</string>
+    <string name="open_in_deezer">Open using Deezer</string>
+    <string name="cover_description">cover_description</string>
+    <string name="open_in_spotify">Open in Spotify</string>
+    <string name="app_not_installed">This app is not installed</string>
 </resources>
