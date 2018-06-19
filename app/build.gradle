@@ -4,7 +4,7 @@ android {
     signingConfigs {
         releasesign {
             storeFile file('/home/manu/Android/androidKeyStore')
-            keyAlias 'cleandroid'
+            keyAlias 'uploadkey'
             keyPassword 'UserAndroid28'
             storePassword 'pdHdMEsM'
         }

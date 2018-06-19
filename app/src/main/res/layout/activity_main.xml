@@ -31,10 +31,26 @@
         android:layout_width="323dp"
         android:layout_height="64dp"
         android:layout_marginTop="32dp"
+        android:background="#1db954"
         android:onClick="openApp"
         android:text="@string/open_in_spotify"
+        android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cover" />
+
+    <Button
+        android:id="@+id/buttonYM"
+        android:layout_width="323dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="96dp"
+        android:background="@android:color/black"
+        android:onClick="openApp"
+        android:text="@string/open_in_youtube_music"
+        android:textColor="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.508"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cover" />
 
