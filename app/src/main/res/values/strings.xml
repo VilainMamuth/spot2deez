@@ -4,5 +4,6 @@
     <string name="cover_description">cover_description</string>
     <string name="open_in_spotify">Open in Spotify</string>
     <string name="open_in_youtube_music">Open in Youtube Music</string>
+    <string name="open_in_amazon_music">Open in Amazon Music</string>
     <string name="app_not_installed">This app is not installed</string>
 </resources>

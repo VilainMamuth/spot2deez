@@ -6,7 +6,9 @@ import net.damota.android.xmod.Album;
 import net.damota.android.xmod.Artist;
 import net.damota.android.xmod.Track;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class DeezerTrack implements Track {
@@ -15,6 +17,8 @@ public class DeezerTrack implements Track {
     DeezerAlbum album;
 
     @Json(name = "title") String name;
+
+    public long duration;
 
     @Override
     public String getTitle() {
@@ -29,6 +33,20 @@ public class DeezerTrack implements Track {
     @Override
     public String getArtistsNames() {
         return artist.getName();
+    }
+
+    @Override
+    public long getDurationMillis() {
+        return 0;
+    }
+
+    @Override
+    public String getDuration() {
+        if (duration < 3600) {
+            return new SimpleDateFormat("mm:ss").format(new Date(duration * 1000));
+        } else {
+            return new SimpleDateFormat("H:mm:ss").format(new Date(duration * 1000));
+        }
     }
 
 

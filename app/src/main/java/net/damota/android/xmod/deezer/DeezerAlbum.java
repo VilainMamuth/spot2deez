@@ -11,10 +11,25 @@ public class DeezerAlbum implements Album {
 
 
     @Override
+    public String getTitle() {
+        return name;
+    }
+
+    @Override
     public String getCoverUrl() {
         if (cover == null) {
             return "";
         }
         return cover;
+    }
+
+    @Override
+    public String getArtistsNames() {
+        return null;
+    }
+
+    @Override
+    public String getGenresNames() {
+        return "";
     }
 }
