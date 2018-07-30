@@ -15,8 +15,8 @@ android {
         applicationId 'net.damota.android.xmod'
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 3
-        versionName '3'
+        versionCode 4
+        versionName '4'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.releasesign
     }

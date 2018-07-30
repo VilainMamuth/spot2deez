@@ -47,7 +47,6 @@ public class SpotifyAlbum implements Album {
         return images.get(0).getUrl();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public String getArtistsNames() {
         String concat = "";
