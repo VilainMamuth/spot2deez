@@ -7,4 +7,5 @@
     <string name="app_not_installed">Cette application n\'est pas installée</string>
     <string name="open_in_youtube_music">Ouvrir avec Youtube Music</string>
     <string name="open_in_amazon_music">Ouvrir dans Amazon Music</string>
+    <string name="time">Durée</string>
 </resources>

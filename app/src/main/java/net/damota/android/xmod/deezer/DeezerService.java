@@ -1,7 +1,5 @@
 package net.damota.android.xmod.deezer;
 
-import net.damota.android.xmod.Track;
-
 import io.reactivex.Single;
 import retrofit2.http.GET;
 import retrofit2.http.Path;

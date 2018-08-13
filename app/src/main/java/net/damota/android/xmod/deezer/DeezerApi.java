@@ -5,20 +5,10 @@ import android.util.Log;
 import net.damota.android.xmod.Album;
 import net.damota.android.xmod.ProviderApi;
 import net.damota.android.xmod.Track;
-import net.damota.android.xmod.spotify.SpotifyAccountService;
-import net.damota.android.xmod.spotify.SpotifyService;
-import net.damota.android.xmod.spotify.Token;
-
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Single;
-import io.reactivex.SingleObserver;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Response;
 import retrofit2.Retrofit;

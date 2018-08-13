@@ -1,14 +1,8 @@
 package net.damota.android.xmod.spotify;
 
-import android.os.Build;
-import android.support.annotation.RequiresApi;
-
 import net.damota.android.xmod.Album;
-import net.damota.android.xmod.Image;
 
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class SpotifyAlbum implements Album {
 

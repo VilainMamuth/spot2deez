@@ -1,7 +1,5 @@
 package net.damota.android.xmod;
 
-import java.util.List;
-
 public interface Album {
 
     String getTitle();

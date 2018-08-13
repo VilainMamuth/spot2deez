@@ -1,6 +1,5 @@
 package net.damota.android.xmod;
 
-import io.reactivex.Observable;
 import io.reactivex.Single;
 
 public abstract class ProviderApi {

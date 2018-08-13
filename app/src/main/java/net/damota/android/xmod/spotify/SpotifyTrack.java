@@ -3,14 +3,11 @@ package net.damota.android.xmod.spotify;
 import com.squareup.moshi.Json;
 
 import net.damota.android.xmod.Album;
-import net.damota.android.xmod.Artist;
 import net.damota.android.xmod.Track;
-import net.damota.android.xmod.deezer.DeezerArtist;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.function.Function;
 
 public class SpotifyTrack implements Track {
 
