@@ -98,7 +98,7 @@ public class SpotifyApi extends ProviderApi {
     }
 
     @Override
-    public Single<Album> getAlbum(String albumId) throws Exception {
+    public Single<Album> getAlbum(String albumId) {
         Log.d(TAG, "getAlbum: ");
 
         return getValidAccessToken()

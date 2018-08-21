@@ -8,4 +8,5 @@
     <string name="open_in_youtube_music">Ouvrir avec Youtube Music</string>
     <string name="open_in_amazon_music">Ouvrir dans Amazon Music</string>
     <string name="time">Durée</string>
+    <string name="release">sortie</string>
 </resources>

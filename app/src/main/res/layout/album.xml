@@ -15,7 +15,6 @@
         android:layout_marginRight="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="Titre"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -30,8 +29,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginStart="16dp"
-        android:text="Artiste"
-        android:textSize="14sp"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/cover"
@@ -58,20 +56,18 @@
         android:layout_marginTop="8dp"
         android:gravity="center_horizontal"
         android:text="@string/time"
-        android:textSize="10sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cover" />
 
     <TextView
         android:id="@+id/dateValue"
-        android:layout_width="wrap_content"
+        android:layout_width="64dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:gravity="center_horizontal"
-        android:text="@string/release"
-        android:textSize="8sp"
-        app:layout_constraintBottom_toTopOf="@+id/timeValue"
-        app:layout_constraintStart_toEndOf="@+id/cover" />
+        android:text="@string/time"
+        app:layout_constraintStart_toEndOf="@+id/timeValue"
+        app:layout_constraintTop_toBottomOf="@+id/cover" />
 </android.support.constraint.ConstraintLayout>

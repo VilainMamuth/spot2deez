@@ -54,5 +54,10 @@ public class SpotifyAlbum implements Album {
         return "";
     }
 
+    @Override
+    public String getReleaseYear() {
+        return null;
+    }
+
 
 }

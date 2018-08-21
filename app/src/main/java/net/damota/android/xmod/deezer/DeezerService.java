@@ -18,4 +18,7 @@ public interface DeezerService {
     @GET("track/{id}")
     Single<DeezerTrack> getTrack(@Path("id") String trackId);
 
+    @GET("album/{id}")
+    Single<DeezerAlbum> getAlbum(@Path("id") String albumId );
+
 }

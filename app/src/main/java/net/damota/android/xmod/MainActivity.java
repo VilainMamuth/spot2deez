@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,10 +37,12 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
     private String sourceProviderId;
     private ProviderApi sourceApi;
 
+
     private TextView artistName;
     /** Le nom peut être le titre d'une piste ou le nom d'un album */
     private TextView name;
     private TextView duration;
+    private TextView release;
 
 
 
@@ -68,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
         artistName = findViewById(R.id.artistvalue);
         name = findViewById(R.id.namevalue);
         duration = findViewById(R.id.timeValue);
+        release = findViewById(R.id.dateValue);
 
         Log.d(TAG, "onCreate: url source " + url.toString());
 
@@ -127,8 +131,10 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
             updateActivity(al);
         } catch (Exception e) {
             //TODO: internationaliser le message
-            Toast.makeText(this, "Pb pour récupérer les infos de cet album", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Pb pour récupérer les infos de cet album", Toast.LENGTH_LONG).show();
             e.printStackTrace();
+            finish();
+
         }
     }
     @Override
@@ -141,13 +147,14 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
         name.setText(track.getTitle());
         artistName.setText(track.getArtistsNames());
         duration.setText(track.getDuration());
-
+        release.setText("");
     }
     private void updateActivity(Album album) {
         new LoadImageTask(this).execute(album.getCoverUrl());
         name.setText(album.getTitle());
         artistName.setText(album.getArtistsNames());
         duration.setText("");
+        release.setText(album.getReleaseYear());
     }
 
     @Override

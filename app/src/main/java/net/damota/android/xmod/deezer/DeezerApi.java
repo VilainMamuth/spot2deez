@@ -56,8 +56,11 @@ public class DeezerApi extends ProviderApi {
     }
 
     @Override
-    public Single<Album> getAlbum(String albumId) throws Exception {
-        return null;
+    public Single<Album> getAlbum(String albumId) {
+        Log.d(TAG, "getAlbum: ");
+        return service.getAlbum(albumId)
+                .subscribeOn(Schedulers.io())
+                .cast(Album.class);
     }
 
 
