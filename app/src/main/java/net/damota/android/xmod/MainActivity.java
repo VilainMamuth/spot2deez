@@ -209,9 +209,11 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
     public void openApp(View view){
         Log.d(TAG, "openApp: " + view.toString());
         Intent i = null;
+        Uri backup = null ;
         switch (view.getId()){
             case R.id.buttonDeez:
                  i = new Intent (Intent.ACTION_VIEW, Uri.parse("deezer://www.deezer.com/search/" + artistName.getText() + " " + name.getText()) );
+                 // ne fonctionne pas toujours backup = Uri.parse("https://www.deezer.com/search/" + artistName.getText() + " " + name.getText());
                 break;
             case R.id.buttonSpot:
                  i = new Intent(Intent.ACTION_VIEW, Uri.parse("spotify:search:" + artistName.getText() + " " + name.getText()) );
@@ -239,7 +241,12 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
                 startActivity(i);
                 //this.finish();
             }else{
-                Toast.makeText(this, R.string.app_not_installed, Toast.LENGTH_SHORT).show();
+                if (backup !=  null){
+                    i = new Intent(Intent.ACTION_VIEW,backup);
+                    startActivity(i);
+                }else {
+                    Toast.makeText(this, R.string.app_not_installed, Toast.LENGTH_SHORT).show();
+                }
             }
         }
 

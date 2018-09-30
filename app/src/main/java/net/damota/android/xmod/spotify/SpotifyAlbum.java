@@ -44,7 +44,7 @@ public class SpotifyAlbum implements Album {
     @Override
     public String getArtistsNames() {
         String concat = "";
-
+        concat += artists.get(0).getName();
 
         return concat;
     }
