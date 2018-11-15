@@ -12,6 +12,9 @@
         android:roundIcon="@drawable/ic_logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-1432851353322917~2955296637"/>
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait"

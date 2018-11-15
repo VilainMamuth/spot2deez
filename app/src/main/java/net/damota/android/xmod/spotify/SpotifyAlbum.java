@@ -1,10 +1,15 @@
 package net.damota.android.xmod.spotify;
 
+import android.util.Log;
+
 import net.damota.android.xmod.Album;
 
 import java.util.List;
 
 public class SpotifyAlbum implements Album {
+
+    private final static String TAG = SpotifyAlbum.class.getSimpleName();
+
 
     /**
      * The name of the album. In case of an album takedown, the value may be an empty string.
@@ -46,6 +51,7 @@ public class SpotifyAlbum implements Album {
         String concat = "";
         concat += artists.get(0).getName();
 
+        Log.d(TAG, "getArtistsNames: " + concat);
         return concat;
     }
 
