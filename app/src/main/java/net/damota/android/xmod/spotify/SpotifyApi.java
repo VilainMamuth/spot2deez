@@ -1,8 +1,10 @@
 package net.damota.android.xmod.spotify;
 
+import android.content.Context;
 import android.util.Log;
 
 import net.damota.android.xmod.Album;
+import net.damota.android.xmod.Episode;
 import net.damota.android.xmod.ProviderApi;
 import net.damota.android.xmod.Track;
 
@@ -24,7 +26,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
 public class SpotifyApi extends ProviderApi {
 
     private final static String TAG = SpotifyApi.class.getSimpleName();
-
+    private Context ctxt;
     private Token accessToken;
 
     private SpotifyAccountService sas;
@@ -33,8 +35,9 @@ public class SpotifyApi extends ProviderApi {
 
     private Response rep = null;
 
-    public SpotifyApi() {
+    public SpotifyApi(Context c) {
         Log.d(TAG, "SpotifyApi: new spotifyapi");
+        this.ctxt = c;
 
         RxJava2CallAdapterFactory rxCallAdapter = RxJava2CallAdapterFactory.create();
 
@@ -72,7 +75,7 @@ public class SpotifyApi extends ProviderApi {
                 .build();
         sas = retrofitAccount.create(SpotifyAccountService.class);
 
-        accessToken = null;
+        accessToken = TokenPersister.getToken( ctxt );
 
     }
 
@@ -107,6 +110,16 @@ public class SpotifyApi extends ProviderApi {
                 ;
     }
 
+    @Override
+    public Single<Episode> getEpisode(String episodeId) {
+        Log.d(TAG, "getEpisode: ");
+
+        return getValidAccessToken()
+                .observeOn(Schedulers.io())
+                .flatMap(token -> { return service.getEpisode(episodeId).cast(Episode.class);})
+                ;
+    }
+
     private Single<Token> newAccessToken(){
         Log.d(TAG, "newAccessToken: start");
         String key = "ZDg2NTA2MjI4M2JmNGIxMjhlN2UxNzU0MGYyMGRkMjA6NzA3NGZiNmNlZWUwNGZmMjk4MjMzNjZkY2MwM2U5NDg=";
@@ -119,7 +132,7 @@ public class SpotifyApi extends ProviderApi {
 
                         long now = System.currentTimeMillis();
                         long expiresAt = now + TimeUnit.SECONDS.toMillis(token.getExpries_in());
-                        Log.d(TAG, "newAccessToken: " + now + " : " + expiresAt);
+                        Log.d(TAG, "newAccessToken: now " + now + " : expAt " + expiresAt);
 
                         token.setExpiresAt(expiresAt);
                         setAccessToken(token);
@@ -136,6 +149,7 @@ public class SpotifyApi extends ProviderApi {
     public void setAccessToken(Token accessToken) {
         Log.d(TAG, "setAccessToken: " + accessToken);
         this.accessToken = accessToken;
+        TokenPersister.setToken(this.ctxt , accessToken);
     }
 
     @Override

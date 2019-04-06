@@ -27,5 +27,14 @@ public interface SpotifyService {
     @GET("albums/{id}")
     Single<SpotifyAlbum> getAlbum(@Path("id") String albumId);
 
+    /**
+     * Get Spotify catalog information for a single podcast episode identified by their unique Spotify ID.
+     *
+     * @param episodeId The Spotify ID for the episode.
+     * @return Requested episode information
+     */
+    @GET("episodes/{id}")
+    Single<SpotifyEpisode> getEpisode(@Path("id") String episodeId);
+
 
 }

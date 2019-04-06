@@ -5,6 +5,7 @@ import android.util.Log;
 import net.damota.android.xmod.Album;
 import net.damota.android.xmod.ProviderApi;
 import net.damota.android.xmod.Track;
+import net.damota.android.xmod.Episode;
 
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
@@ -53,6 +54,13 @@ public class DeezerApi extends ProviderApi {
         return  service.getTrack(trackId)
                 .subscribeOn(Schedulers.io())
                 .cast(Track.class);
+    }
+
+    @Override
+    public Single<Episode> getEpisode(String episodeId) {
+        Log.d(TAG, "getEpisode: id " + episodeId);
+
+        return  null;
     }
 
     @Override

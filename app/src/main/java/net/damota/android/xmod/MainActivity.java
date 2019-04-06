@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,8 +21,6 @@ import com.google.android.gms.ads.MobileAds;
 
 import net.damota.android.xmod.deezer.DeezerApi;
 import net.damota.android.xmod.spotify.SpotifyApi;
-import net.damota.android.xmod.spotify.Token;
-import net.damota.android.xmod.spotify.TokenPersister;
 
 public class MainActivity extends AppCompatActivity implements LoadImageTask.Listener {
     private final static String TAG = MainActivity.class.getSimpleName();
@@ -36,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
     private final static String PROVIDER_SPOTIFY = "spotify";
     private final static String TYPE_TRACK = "track";
     private final static String TYPE_ALBUM = "album";
+    private final static String TYPE_EPISODE = "episode"; //podcast episode
     private Uri url;
 
     private String sourceProviderName;
@@ -67,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
 
         MobileAds.initialize(this, "ca-app-pub-1432851353322917~2955296637");
         mAdView = findViewById(R.id.lapub);
-        AdRequest adRequest = new AdRequest.Builder().build();
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice("F359BC9CD18E28CA1BC71FCB07389250").build();
         mAdView.loadAd(adRequest);
 
         this.pm = getPackageManager();
@@ -89,13 +87,14 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
 
         switch (sourceProviderName) {
             case PROVIDER_SPOTIFY:
-                sourceApi = new SpotifyApi();
+                sourceApi = new SpotifyApi(this);
                 break;
             case PROVIDER_DEEZER:
                 sourceApi = new DeezerApi();
                 break;
         }
 
+/*
         if (sourceApi.needToken()) {
             //si on a un token valide en cache , alors on en demande pas un nouveau
             Token spotifyAccessToken = TokenPersister.getToken(this);
@@ -103,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
                 ((SpotifyApi) sourceApi).setAccessToken(spotifyAccessToken);
             }
         }
+*/
 
 
         switch (sourceProviderType) {
@@ -112,12 +112,17 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
             case TYPE_ALBUM:
                 this.getAlbum(sourceApi, sourceProviderId);
                 break;
+            case TYPE_EPISODE:
+                this.getEpisode(sourceApi, sourceProviderId);
+                break;
         }
 
 
+/*
         if (sourceApi.needToken()) {
             TokenPersister.setToken(this, ((SpotifyApi) sourceApi).getAccessToken());
         }
+*/
 
 
     }
@@ -129,6 +134,16 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
             updateActivity(tr);
         } catch (Exception e) {
             Toast.makeText(this, "Pb pour récupérer les infos de cette track", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+    }
+
+    private void getEpisode(ProviderApi from, String episodeId) {
+        try {
+            Episode ep = from.getEpisode(episodeId).blockingGet();
+            updateActivity(ep);
+        } catch (Exception e) {
+            Toast.makeText(this, "Pb pour récupérer les infos de cet episode", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }
@@ -156,6 +171,14 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
         name.setText(track.getTitle());
         artistName.setText(track.getArtistsNames());
         duration.setText(track.getDuration());
+        release.setText("");
+    }
+
+    private void updateActivity(Episode episode) {
+        new LoadImageTask(this).execute(episode.getCoverUrl());
+        name.setText(episode.getTitle());
+        artistName.setText("");
+        duration.setText(episode.getDuration());
         release.setText("");
     }
 

@@ -27,6 +27,7 @@
                 <data android:host="open.spotify.com" />
                 <data android:pathPrefix="/track" />
                 <data android:pathPrefix="/album" />
+                <data android:pathPrefix="/episode" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
