@@ -7,8 +7,9 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -20,6 +21,8 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 
 import net.damota.android.xmod.deezer.DeezerApi;
+import net.damota.android.xmod.room.AppDatabase;
+import net.damota.android.xmod.room.Entry;
 import net.damota.android.xmod.spotify.SpotifyApi;
 
 public class MainActivity extends AppCompatActivity implements LoadImageTask.Listener {
@@ -59,9 +62,10 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar myToolbar = findViewById(R.id.my_toolbar);
+/*        Toolbar myToolbar = findViewById(R.id.my_toolbar);
         myToolbar.setNavigationIcon(R.drawable.ic_logo);
-        setSupportActionBar(myToolbar);
+        setSupportActionBar(myToolbar);*/
+
 
         MobileAds.initialize(this, "ca-app-pub-1432851353322917~2955296637");
         mAdView = findViewById(R.id.lapub);
@@ -104,16 +108,16 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
         }
 */
 
-
+        Entry e = null;
         switch (sourceProviderType) {
             case TYPE_TRACK:
-                this.getTrack(sourceApi, sourceProviderId);
+                e = this.getTrack(sourceApi, sourceProviderId);
                 break;
             case TYPE_ALBUM:
-                this.getAlbum(sourceApi, sourceProviderId);
+                e = this.getAlbum(sourceApi, sourceProviderId);
                 break;
             case TYPE_EPISODE:
-                this.getEpisode(sourceApi, sourceProviderId);
+                e = this.getEpisode(sourceApi, sourceProviderId);
                 break;
         }
 
@@ -123,35 +127,43 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
             TokenPersister.setToken(this, ((SpotifyApi) sourceApi).getAccessToken());
         }
 */
-
+        if (e != null) {
+            updateActivity(e);
+            addToHistory(e);
+        }
 
     }
 
 
-    private void getTrack(ProviderApi from, String trackId) {
+    private Entry getTrack(ProviderApi from, String trackId) {
+        Entry entry = null;
         try {
             Track tr = from.getTrack(trackId).blockingGet();
-            updateActivity(tr);
+            return buildEntry(tr);
         } catch (Exception e) {
             Toast.makeText(this, "Pb pour récupérer les infos de cette track", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
+        return entry;
     }
 
-    private void getEpisode(ProviderApi from, String episodeId) {
+    private Entry getEpisode(ProviderApi from, String episodeId) {
+        Entry entry = null;
         try {
             Episode ep = from.getEpisode(episodeId).blockingGet();
-            updateActivity(ep);
+            return buildEntry(ep);
         } catch (Exception e) {
             Toast.makeText(this, "Pb pour récupérer les infos de cet episode", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
+        return entry;
     }
 
-    private void getAlbum(ProviderApi from, String albumId) {
+    private Entry getAlbum(ProviderApi from, String albumId) {
+        Entry entry = null;
         try {
             Album al = from.getAlbum(albumId).blockingGet();
-            updateActivity(al);
+            return buildEntry(al);
         } catch (Exception e) {
             //TODO: internationaliser le message
             Toast.makeText(this, "Pb pour récupérer les infos de cet album", Toast.LENGTH_LONG).show();
@@ -159,6 +171,7 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
             finish();
 
         }
+        return entry;
     }
 
     @Override
@@ -166,28 +179,42 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
         super.onResume();
     }
 
-    private void updateActivity(Track track) {
-        new LoadImageTask(this).execute(track.getAlbum().getCoverUrl());
-        name.setText(track.getTitle());
-        artistName.setText(track.getArtistsNames());
-        duration.setText(track.getDuration());
-        release.setText("");
+    private Entry buildEntry(Track track) {
+        Entry entry = new Entry();
+        entry.setCoverUrl(track.getAlbum().getCoverUrl());
+        entry.setTitle(track.getTitle());
+        entry.setArtist(track.getArtistsNames());
+        entry.setDuration(track.getDuration());
+        entry.setReleaseYear("");
+        return entry;
     }
 
-    private void updateActivity(Episode episode) {
-        new LoadImageTask(this).execute(episode.getCoverUrl());
-        name.setText(episode.getTitle());
-        artistName.setText("");
-        duration.setText(episode.getDuration());
-        release.setText("");
+    private Entry buildEntry(Episode episode) {
+        Entry entry = new Entry();
+        entry.setCoverUrl(episode.getCoverUrl());
+        entry.setTitle(episode.getTitle());
+        entry.setArtist("");
+        entry.setDuration(episode.getDuration());
+        entry.setReleaseYear("");
+        return entry;
     }
 
-    private void updateActivity(Album album) {
-        new LoadImageTask(this).execute(album.getCoverUrl());
-        name.setText(album.getTitle());
-        artistName.setText(album.getArtistsNames());
-        duration.setText("");
-        release.setText(album.getReleaseYear());
+    private Entry buildEntry(Album album) {
+        Entry entry = new Entry();
+        entry.setCoverUrl(album.getCoverUrl());
+        entry.setTitle(album.getTitle());
+        entry.setArtist(album.getArtistsNames());
+        entry.setDuration("");
+        entry.setReleaseYear(album.getReleaseYear());
+        return entry;
+    }
+
+    private void updateActivity(Entry entry) {
+        new LoadImageTask(this).execute(entry.getCoverUrl());
+        name.setText(entry.getTitle());
+        artistName.setText(entry.getArtist());
+        duration.setText(entry.getDuration());
+        release.setText(entry.getReleaseYear());
     }
 
     @Override
@@ -319,6 +346,12 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Lis
         if(!isAppLaunchable(PACKAGE_DEEZER)){ hideButton(R.id.buttonDeez);}
         if(!isAppLaunchable(PACKAGE_AMAZON_MUSIC)){ hideButton(R.id.buttonAmazon);}
         if(!isAppLaunchable(PACKAGE_YOUTUBE_MUSIC)){ hideButton(R.id.buttonYM);}
+    }
+
+
+    private void addToHistory(Entry e){
+        AddToHistoryTask t = new AddToHistoryTask(this,e);
+        t.execute();
     }
 
 }

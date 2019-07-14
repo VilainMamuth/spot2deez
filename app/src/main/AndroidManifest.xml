@@ -12,13 +12,22 @@
         android:roundIcon="@drawable/ic_logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        <activity android:name=".HistoryActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-1432851353322917~2955296637"/>
+            android:value="ca-app-pub-1432851353322917~2955296637" />
+
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait"
-            android:logo="@drawable/ic_logo">
+            android:logo="@drawable/ic_logo"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -28,6 +37,7 @@
                 <data android:pathPrefix="/track" />
                 <data android:pathPrefix="/album" />
                 <data android:pathPrefix="/episode" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
@@ -44,8 +54,6 @@
                 <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
         </activity>
-
-
     </application>
 
 </manifest>

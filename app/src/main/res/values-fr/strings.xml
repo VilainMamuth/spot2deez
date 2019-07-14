@@ -10,4 +10,6 @@
     <string name="search_in_ddg">Chercher dans DuckDuckGo</string>
     <string name="time">Durée</string>
     <string name="release">sortie</string>
+    <string name="action_settings">Réglages</string>
+    <string name="title_activity_history">Historique</string>
 </resources>
